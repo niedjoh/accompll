@@ -1,0 +1,9 @@
+(VAR x y)
+(THEORY (AC plus))
+(RULES
+zero(sharp) -> sharp
+plus(x, sharp) -> x
+plus(zero(x), zero(y)) -> zero(plus(x,y))
+plus(zero(x), one(y)) -> one(plus(x,y))
+plus(one(x), one(y)) -> zero(plus(x,plus(y, one(sharp))))
+)

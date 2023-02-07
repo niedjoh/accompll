@@ -1,0 +1,10 @@
+(VAR x y)
+(THEORY (AC a))
+(RULES
+s(p(x)) -> x
+p(s(x)) -> x
+m(x,zero) -> x
+p(m(x,y)) -> m(x,s(y))
+a(x,zero) -> x
+s(a(x,y)) -> a(x,s(y)) 
+)

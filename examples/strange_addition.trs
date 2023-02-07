@@ -1,0 +1,6 @@
+(VAR x y)
+(THEORY (AC +))
+(RULES
+d(+(s(x),y)) -> s(d(+(p(s(x)),y)))
+p(s(s(x))) -> s(p(s(x)))
+)

@@ -1,0 +1,7 @@
+(VAR)
+(THEORY (AC +) (AC *))
+(RULES
++(a,b) -> *(a,b)
+*(a,c) -> g(e)
+e -> ep
+)

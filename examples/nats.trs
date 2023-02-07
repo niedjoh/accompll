@@ -1,0 +1,9 @@
+(VAR x y)
+(THEORY (AC +))
+(RULES
+-(zero,x) -> zero
+-(x,zero) -> x
+-(s(x),s(y)) -> -(x,y)
++(x,zero) -> x
++(x,s(y)) -> s(+(x,y))
+)

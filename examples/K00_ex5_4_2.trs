@@ -1,0 +1,6 @@
+(VAR x)
+(THEORY (AC h))
+(RULES
+f(f(x)) -> f(g(x))
+g(x) -> h(f(x), f(x))
+)

@@ -1,0 +1,7 @@
+(VAR x)
+(THEORY (AC p))
+(RULES
+p(0,x) -> x
+p(1,n(1)) -> 0
+p(p(x,1),m(1)) -> x
+)

@@ -1,0 +1,14 @@
+(VAR x y z)
+(THEORY (AC +))
+(RULES
+s(p(x)) -> x
+p(s(x)) -> x
+-(x,zero) -> x
+-(x,s(y)) -> p(-(x,y))
+-(x,p(y)) -> s(-(x,y))
++(x,zero) -> x
++(x,s(y)) -> s(+(x,y))
++(x,p(y)) -> p(+(x,y))
+-(-(x,y),z) -> -(x,+(y,z))
++(-(x,y),z) -> -(+(x,z),y)
+)

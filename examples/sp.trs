@@ -1,0 +1,7 @@
+(VAR x y)
+(THEORY (AC plus))
+(RULES
+s(plus(x,y)) -> plus(s(x),y) 
+s(p(x)) -> x
+p(s(x)) -> x
+)

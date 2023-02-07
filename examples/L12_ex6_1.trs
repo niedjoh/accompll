@@ -1,0 +1,17 @@
+(VAR x y)
+(THEORY (AC plus) (AC times))
+(RULES
+plus(zero,x) -> x
+plus(s(x),y) -> s(plus(x,y))
+times(zero,x) -> zero
+times(s(x),y) -> plus(y,times(x,y))
+square(x) -> times(x,x)
+even(zero) -> true
+even(s(zero)) -> false
+even(s(x)) -> odd(x)
+odd(zero) -> false
+odd(s(zero)) -> true
+odd(s(x)) -> even(x)
+even(square(x)) -> odd(square(s(x)))
+odd(square(x)) -> even(square(s(x)))
+)

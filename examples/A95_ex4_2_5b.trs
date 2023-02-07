@@ -1,0 +1,6 @@
+(VAR x y)
+(THEORY (AC or) (AC and))
+(RULES
+not(not(x)) -> x
+or(not(x),not(y)) -> not(and(x,y))
+)

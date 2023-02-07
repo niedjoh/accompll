@@ -1,0 +1,6 @@
+(THEORY (AC p))
+(RULES
+p(r,g) -> p(b,b)
+p(b,r) -> p(g,g)
+p(g,b) -> p(r,r)
+)

@@ -1,0 +1,7 @@
+(VAR x)
+(THEORY (AC f))
+(RULES
+f(x,one) -> x
+f(f(f(f(a,a),b),b),b) -> f(f(f(a,a),a),b)
+f(f(f(f(a,a),a),a),b) -> f(f(f(a,a),b),b)
+)

@@ -1,0 +1,10 @@
+(VAR x y xs ys)
+(THEORY (AC p))
+(RULES
+p(x,zero) -> x
+p(x,s(y)) -> s(p(x,y))
+add(nil,nil) -> zero
+add(c(x,xs),nil) -> p(x,add(xs,nil))
+add(nil,c(y,ys)) -> p(y,add(nil,ys))
+add(c(x,xs),c(y,ys)) -> p(p(x,y),add(xs,ys))
+)

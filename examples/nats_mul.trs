@@ -1,0 +1,12 @@
+(VAR x y z)
+(THEORY (AC +) (AC *))
+(RULES
+-(zero,x) -> zero
+-(x,zero) -> x
+-(s(x),s(y)) -> -(x,y)
++(x,zero) -> x
++(x,s(y)) -> s(+(x,y))
+*(x,zero) -> zero
+*(x,s(y)) -> +(*(x,y),x)
+*(+(x,y),z) -> +(*(x,z),*(y,z))
+)
