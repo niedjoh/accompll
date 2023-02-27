@@ -71,9 +71,8 @@ cd examples
 ```
 
 The script which was used to obtain the official experimental data is located at
-`examples/run_experiments.sh`.
-
-At the moment, the experimental data can be found [here](http://jniederhauser.at/accompll/a.html).
+`examples/run_experiments.sh` and the experimental data can be found 
+[here](http://cl-informatik.uibk.ac.at/software/accompll/experiments/cade29/index.html).
 
 **Warning:** The implemented AC matching procedure gets "fresh" variables by naming them
 `変数i` for some nonzero natural number `i`. Hence, please make sure that no variable in the input ES is named
