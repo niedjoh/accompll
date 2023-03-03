@@ -2,7 +2,7 @@
 outfile=`mktemp`
 errfile=`mktemp`
 
-timeout 2 natt 1> "$outfile" 2> "$errfile"
+timeout 2 NaTT.exe 1> "$outfile" 2> "$errfile"
 
 errcode=`echo $?`
 

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+<title>Experiments</title>
+<style>
+body  { font-family: Helvetica,sans-serif; }
+h1 {
+  color: #04e;
+  font-size: xx-large;
+  margin: 0;
+  padding: 1ex 1ex 1ex 0;
+}
+header {
+  margin: 0;
+  padding: 0;
+}
+nav {
+  line-height: 2em;
+  background: #eef;
+  border-top:    1px solid #aaf;
+  border-bottom: 1px solid #aaf;
+}
+nav ul { margin-top: 0; padding-top: 1em; }
+nav li { list-style-type: none; margin: 0; padding: 0; }
+nav b { margin-right: 1em; }
+nav a { margin-right: 1ex; }
+table.results {
+  border-top:    solid 1px #ccc;
+  border-bottom: solid 1px #ccc;
+}
+.results caption {
+  text-align: left;
+  font-weight: bold;
+  font-size: x-large;
+  color: #a00;
+  margin: 1em 0 0.5em 0;
+}
+.results thead { position: sticky; top: 0; margin-left: 1em; }
+.results thead th {
+  background: #bbf;
+  border-bottom: solid 2px #fff;
+}
+.results tbody td { text-align: right; }
+.results tbody th:first-child,
+.results tbody td:first-child { text-align: left; }
+.results tr.count { font-weight: bold; }
+.results tbody tr:nth-child(odd)   { background: white; }
+.results tbody tr:nth-child(even)  { background: #ddf;  }
+.YES,     .YES     a:link, .YES     a:visited { color: green; font-weight: bold; }
+.NO,      .NO      a:link, .NO      a:visited { color: red;   font-weight: bold; }
+.MAYBE,   .MAYBE   a:link, .MAYBE   a:visited { color: #e88; }
+.ERROR,   .ERROR   a:link, .ERROR   a:visited { color: black; background: red; }
+.TIMEOUT, .TIMEOUT a:link, .TIMEOUT a:visited { color: black; background: #dd0; }
+.abbreviations caption {
+  text-align: left;
+  font-weight: bold;
+  font-size: x-large;
+  color: #a00;
+  margin: 1em 0 0.5em 0;
+}
+.abbreviations th,
+.abbreviations td { padding: 0.2ex 1ex 0.2ex 1ex; text-align: left; }
+.abbreviations th:first-child { font-weight: bold; }
+.abbreviations td:nth-child(3) { color: darkgreen; }
+</style>
+</head>
+
+% unless subdirs.keys == ["."] and subdirs["."] == "."
+<nav>
+<ul>
+% for dir in natsort(subdirs.keys)
+<li>
+% unless dir == "."
+<b><%= dir %></b>
+% end
+%   for subdir in subdirs[dir]
+<a href="?dir=<%= dir %>,<%= subdir %>"><%= subdir %></a>
+%   end
+% end
+</ul>
+</nav>
+% end
+
+% if config[:dir]
+
+<%= header %>
+
+<table class="results">
+<caption>Summary</caption>
+<thead>
+<tr>
+<th>status
+% for tool in tools
+<th><%= tool %>
+% end
+</tr>
+</thead>
+<tbody>
+% for status in statuses
+<tr class="status">
+<th class="<%= status %>"><%= status %>
+%   for tool in tools
+<td><b><%= count[tool][status] %></b>
+%   end
+</tr>
+<tr class="time">
+<td>(sec)
+%   for tool in tools
+<td><%= format("%.2f",time[tool][status]) %>
+%   end
+</tr>
+% end
+</tbody>
+</table>
+
+<table class="results">
+<caption>Individual results</caption>
+<thead>
+<tr>
+<th>file
+% for tool in tools
+<th><%= tool %>
+% end
+</tr>
+</thead>
+<tbody>
+% for file in natsort(results.keys) do
+<tr>
+<td><%= ahref(File.join([config[:dir],file]), file) %>
+%   for tool in tools
+%     if results[file][tool]
+%       status = results[file][tool]['status']
+<td class="<%= status %>"><%= ahref(results[file][tool]['outfile'], "#{status[0,1]}:#{format("%.2f",results[file][tool]['time'])}") %>
+%     else
+<td>?
+%     end
+%   end
+</tr>
+% end
+</tbody>
+</table>
+% end
