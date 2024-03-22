@@ -2,8 +2,6 @@ module Completion(CompletionQuadruple (..), OrientationPreference (..), complete
 
 import System.IO
 
-import Data.List (nubBy)
-
 import qualified Data.Rewriting.Rule as R
 import qualified Data.Rewriting.Rules as Rs
 
@@ -12,6 +10,7 @@ import Data.Rewriting.Rule (Rule (..))
 import Data.Rewriting.Rules.Rewrite (fullRewrite)
 
 import Control.Monad (when)
+import Text.PrettyPrint.ANSI.Leijen (putDoc,text,line,(<>))
 
 import Utils
 import Rewriting
@@ -20,11 +19,6 @@ import RewritingAC
 import TTInterface
 
 type CompletionQuadruple = ([Equation], TRS, TRS, TRS)
-data OrientationPreference = LeftToRight | RightToLeft deriving Eq
-
-instance Show OrientationPreference where
-  show LeftToRight = "Left"
-  show RightToLeft = "Right"
 
 -- invoke TT only if rule is valid & left-linear
 invokeTTSafely :: TTInfo -> [String] -> TRS -> IO TTAnswer
@@ -75,10 +69,11 @@ sortEsAndPs (es, ps, rs, cs) = (sortBySize es, sortBySize ps, rs, cs)
 
 -- given a rule, deduce new CPs and then compose/collapse existing
 -- rules as well as pending rules and new rules added by CPs
-deduceAndComposeAndCollapse :: [String] -> [String] -> Bool -> RewriteFunction ->
+deduceAndComposeAndCollapse :: [String] -> [String] -> Options -> RewriteFunction ->
                                Rule String String -> CompletionQuadruple -> CompletionQuadruple
-deduceAndComposeAndCollapse acss vs p rw r (es,ps,rs,cs) =
+deduceAndComposeAndCollapse acss vs opt rw r (es,ps,rs,cs) =
   let
+    p     = enablePCP opt
     newPs = ps ++ criticalPairs p (r:rs) (rulesAC acss vs) [r] ++
             flipRules (criticalPairs p (r:rs) [r] (rulesAC acss vs))
     newEs = es ++ criticalPairs p (r:rs) [r] rs ++ criticalPairs p (r:rs) rs [r] ++
@@ -89,6 +84,7 @@ deduceAndComposeAndCollapse acss vs p rw r (es,ps,rs,cs) =
     compose rs' = [Rule {lhs = lhs r', rhs = nf rw (r:(rs++ps)) (rhs r')} | r' <- rs']
     collapse rs rs' = [Rule {lhs = Rs.result . head $ Rs.fullRewrite rs (lhs r'), rhs = rhs r'} | r' <- rs']
   in (newEs ++ collapse [r] col ++ collapse (r:rs) newCol, compose newCom, r : compose com, cs)
+  -- (newEs ++ newPs,ps,r:rs,cs) [inference system B without inter-reduce]
 
 -- pending rules must not be empty
 consumePendingRule :: CompletionQuadruple -> CompletionQuadruple
@@ -105,15 +101,29 @@ orientOrConsumePendingRule ttinfo acss o (es,ps,rs,cs) = do
     Nothing -> if null ps then return Nothing else return . Just $ consumePendingRule (es,ps,rs,cs)
     Just cq -> return (Just cq)
 
-complete :: TTInfo -> [String] -> [String] -> Bool -> RewriteFunction ->
+complete :: TTInfo -> [String] -> [String] -> Options -> RewriteFunction ->
             OrientationPreference -> CompletionQuadruple ->
             IO (Maybe CompletionQuadruple)
-complete ttinfo acss vs p rw o cQuadruple = do
+complete ttinfo acss vs opt rw ori cQuadruple = do
+  let (es,ps,rs,_) = cQuadruple
+  when (debug opt && verbosity opt > 0) $ putStrLn "------------ ITERATION ------------"
+  when (debug opt && verbosity opt > 1) $ do
+    putStrLn "ES:"
+    putDoc $ prettyRs "=" es
+    putStrLn "PS:"
+    putDoc $ prettyRs "=" ps
+    putStrLn "RS:"
+    putDoc $ prettyRs "->" rs
   let cQuadruple' = (delete acss) . (simplify rw) $ cQuadruple
   if done cQuadruple' then return . Just $ cQuadruple' else do
-    mcQuadruple'' <- orientOrConsumePendingRule ttinfo acss o (sortEsAndPs cQuadruple')
+    mcQuadruple'' <- orientOrConsumePendingRule ttinfo acss ori (sortEsAndPs cQuadruple')
     case  mcQuadruple'' of
-      Nothing                 -> return Nothing                                 
+      Nothing                 -> return Nothing
       Just (es, ps, r:rs, cs) -> do
-        complete ttinfo acss vs p rw o cQuadruple''' where
-        cQuadruple''' = deduceAndComposeAndCollapse acss vs p rw r (es,ps,rs,cs)
+        when (debug opt && verbosity opt > 0) $ do
+          putStrLn "--- NEW RULE ---"
+          putDoc $ R.prettyRule (text "->") text text r <> line
+        complete ttinfo acss vs opt rw ori cQuadruple''' where
+        cQuadruple''' = deduceAndComposeAndCollapse acss vs opt rw r (es,ps,rs,cs)
+
+

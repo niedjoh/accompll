@@ -4,10 +4,10 @@
 -(zero,x) -> zero
 -(x,zero) -> x
 -(s(x),s(y)) -> -(x,y)
-+(x,zero) -> x
-+(x,s(y)) -> s(+(x,y))
-*(x,zero) -> zero
-*(x,s(y)) -> +(*(x,y),x)
++(zero,x) -> x
++(s(x),y) -> s(+(x,y))
+*(zero,x) -> zero
+*(s(x),y) -> +(*(x,y),y)
 *(+(x,y),z) -> +(*(x,z),*(y,z))
 div(zero,s(y)) -> zero
 div(s(x),s(y)) -> s(div(-(x,y),s(y)))

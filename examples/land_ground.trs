@@ -1,0 +1,6 @@
+(THEORY (AC and))
+(RULES
+ and(0,0) -> 0
+ and(1,1) -> 1
+ and(0,1) -> 0
+)

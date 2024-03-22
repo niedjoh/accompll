@@ -1,0 +1,7 @@
+(VAR x y)
+(THEORY (AC p))
+(RULES
+f(p(x,y)) -> p(f(x),f(y))
+f(zero) -> zero
+p(x,zero) -> x
+)

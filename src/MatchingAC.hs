@@ -31,9 +31,8 @@ tryAll = listToMaybe . catMaybes
 
 -- needed when the + ... + notation from the paper collapses to a single term (ts will not be empty)
 term :: f -> [Term f v] -> Term f v
-term f ts = if   length ts == 1
-            then head ts
-            else Fun f ts
+term f [t] = t
+term f ts = Fun f ts
 
 -- the following functions correspond to the inference rules in Fig. 1 of the paper
 

@@ -1,13 +1,15 @@
 module Utils where
 
 import Data.List (nub)
-
 import Data.Rewriting.Term (Term (..))
 import Data.Rewriting.Rule (Rule (..))
 import Data.Rewriting.Problem (Problem (..))
 
+import qualified Data.Rewriting.Rule as R
 import qualified Data.Rewriting.Rules as Rs
 import qualified Data.Rewriting.Problem as P
+
+import Text.PrettyPrint.ANSI.Leijen (Doc,text,vsep,line,(<>))
 
 import ParseUtils
 
@@ -20,6 +22,8 @@ instance Show SimpRel where
 
 data TTInputFormat = NaTTXML | WST deriving (Eq, Show, Read)
 
+data OrientationPreference = LeftToRight | RightToLeft deriving (Eq, Show, Read)
+
 data Options = Options
   { simpRel         :: SimpRel
   , terminationTool :: String
@@ -28,7 +32,13 @@ data Options = Options
   , interactiveMode :: Bool
   , enablePCP       :: Bool
   , inputFile       :: String
+  , debug           :: Bool
+  , debugThread     :: OrientationPreference
+  , verbosity       :: Int
   } deriving Show
+
+prettyRs :: String -> [Rule String String] -> Doc
+prettyRs sep rs = (vsep $ map (R.prettyRule (text sep) text text) rs) <> line
 
 acSymbols :: Maybe [P.Theory f v] -> [f]
 acSymbols (Just ths) = concat $ go ths where

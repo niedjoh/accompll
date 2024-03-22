@@ -47,6 +47,12 @@ seperated by `(RUN)` and gives `YES` or `NO` or `MAYBE` followed by a newline sy
 that also any error should be printed within one line due to technical simplicity of the
 implementation.
 
+The flag `-d` enables the debug mode which prints some information about the current run.
+With `--dt` you can choose which thread you want to debug, `LeftToRight` is the default option.
+You can then use `-v` to control the verbosity of the debug output, `-v 1` will only show the
+new rule per iteration while `-v 2` gives full information per iteration about the sets of
+equations, pending rules and rules.
+
 Example usage with NaTT (default):
 
 `accompll -s R --tt ./callNaTT.sh --ti NaTTXML <file>`
@@ -77,6 +83,14 @@ The script which was used to obtain the official experimental data is located at
 **Warning:** The implemented AC matching procedure gets "fresh" variables by naming them
 `変数i` for some nonzero natural number `i`. Hence, please make sure that no variable in the input ES is named
 like that. Note that 変数 (read: hensuu) is a Japanese word for *variable*.
+
+## Validity Problem Solver
+
+By typing `cabal install` you also get the executable acvp which is a small additional tool
+for solving validity problems. It expects an AC complete TRS R as input, and via the command
+line option `-s` you can specify whether R or R/AC is AC-complete. If you then provide
+a concrete validity problem via the option `--vp`, the tool tries to solve it with the
+given TRS and strategy.
 
 [^1]: http://cl-informatik.uibk.ac.at/software/kbcv/
 [^2]: https://www.lri.fr/~marche/tpdb/format.html

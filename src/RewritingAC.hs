@@ -32,8 +32,8 @@ rewriteSlashAC acss trs = markedRewriteAtRoot (matchAC acss fvs) (extension acss
 
 -- if rs is AC-complete, this solves the validity problem s = t for rs 
 solveValidityProblem :: [String] -> TRS -> Term String String -> Term String String ->
-                        (Bool, Term String String, Term String String)
-solveValidityProblem acss rs s t = (equivalentModuloAC acss s' t', s', t') where
-  nfRs = nf normalRewriting rs
+                        RewriteFunction -> (Bool, Term String String, Term String String)
+solveValidityProblem acss rs s t rw = (equivalentModuloAC acss s' t', s', t') where
+  nfRs = nf rw rs
   s' = nfRs s
   t' = nfRs t

@@ -1,0 +1,9 @@
+(THEORY (AC .) (AC +))
+(VAR a b c d)
+(RULES
+.(+(a,b),+(c,d)) -> +(.(a,c),.(b,d))
+.(a,1) -> a
+.(1,a) -> a
++(a,0) -> a
++(0,a) -> a
+)

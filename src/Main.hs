@@ -72,7 +72,23 @@ optionsParser = Options
          <> help "use prime critical pairs" )
       <*> argument str
           ( metavar "FILE"
-         <> help "input file in WST format")
+         <> help "input file in WST format" )
+      <*> switch
+          ( long "debug"
+         <> short 'd'
+         <> help "enable debug printing" )
+      <*> option auto
+         ( long "dt"
+        <> metavar "LeftToRight | RightToLeft"
+        <> help "which thread to debug"
+        <> showDefault
+        <> value LeftToRight )
+      <*> option auto
+          ( long "verb"
+         <> short 'v'
+         <> help "verbosity of debug output"
+         <> showDefault
+         <> value 1 )
 
 opts :: ParserInfo Options
 opts = info (optionsParser <**> helper)
@@ -84,11 +100,11 @@ opts = info (optionsParser <**> helper)
               )
   <> header "accompll - a tool performing AC-completion for left-linear TRSs" )
 
-runCompletion :: TTInfo -> [String] -> Bool -> RewriteFunction -> [Equation] -> OrientationPreference ->
+runCompletion :: TTInfo -> [String] -> Options -> RewriteFunction -> [Equation] -> OrientationPreference ->
                  IO (Maybe CompletionQuadruple)
-runCompletion ttinfo acss p rw es o = do
+runCompletion ttinfo acss opt rw es o = do
   ttinfo <- if (interactive ttinfo) then startTTProcess ttinfo else return ttinfo
-  res <- complete ttinfo acss ["x","y","z"] p rw o (es,[],[],[])
+  res <- complete ttinfo acss ["x","y","z"] opt rw o (es,[],[],[])
   when (interactive ttinfo) $ do
     hClose (hin ttinfo)
     -- waitForProcess (hproc ttinfo) this does not work due to TTT2 interactive mode restrictions
@@ -114,8 +130,12 @@ main = do
                       , herr = undefined
                       , hproc = undefined
                       }
-  let complete = runCompletion ttinfo acss (enablePCP args) rw es
-  eitherRes <- race (complete LeftToRight) (complete RightToLeft)
+  let complete = runCompletion ttinfo acss args rw es
+  eitherRes <- case debug args of
+    False -> race (complete LeftToRight) (complete RightToLeft)
+    True -> case debugThread args of
+      LeftToRight -> Left <$> complete LeftToRight
+      RightToLeft -> Right <$> complete RightToLeft
   case fromEither eitherRes of
     Nothing -> putStrLn "MAYBE"
     Just (_,_,trs,_) -> let
@@ -125,7 +145,7 @@ main = do
           putStrLn "YES"
           putDoc $ P.prettyWST text text res
         Just (s,t) -> do
-          let (valid,s',t') = solveValidityProblem acss trs s t
+          let (valid,s',t') = solveValidityProblem acss trs s t normalRewriting
           if valid then putStrLn "YES" else putStrLn "NO"
           putStrLn ""
           putDoc $ T.prettyTerm text text s
