@@ -50,7 +50,7 @@ answerAvailable out =
 
 decode :: String -> String -> TTAnswer
 decode out err = if isPrefixOf "YES" out then Yes else
-                 if isPrefixOf "NO" out || isPrefixOf "MAYBE" out || isPrefixOf "TIMEOUT" out then No
+                 if isPrefixOf "NO" out || isPrefixOf "MAYBE" out || isPrefixOf "TIMEOUT" out || out == "" then No
                  else Error ("Termination Tool: " ++ out ++ err)
 
 startTTProcess :: TTInfo -> IO TTInfo
