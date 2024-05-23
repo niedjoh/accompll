@@ -4,6 +4,9 @@ name:                accompll
 version:             0.1.1.0
 synopsis:            AC-completion for left-linear TRSs
 author:              Johannes Niederhauser
+license:             MIT
+license-file:        LICENSE
+homepage:            http://cl-informatik.uibk.ac.at/software/accompll/
 build-type:          Simple
                      
 executable accompll
